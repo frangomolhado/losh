@@ -1,8 +1,8 @@
+#include "input.h"
+
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-
-#include "input.h"
 
 int main(void) {
     char input[INPUT_BUFFER_SIZE];

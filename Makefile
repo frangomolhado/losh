@@ -12,12 +12,15 @@ OBJ_DB = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/debug/%.o, $(SRC))
 OBJ_RL = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/release/%.o, $(SRC))
 BIN = losh
 
-.PHONY = all clean debug_dirs release_dirs
+.PHONY = all clean format debug_dirs release_dirs
 
 all: debug
 
 clean:
 	@rm -rf $(OBJ_DIR) $(BIN_DIR)
+
+format:
+	@clang-format src/*.c -style=file -i
 
 # Debug compilation
 debug: debug_dirs $(BIN_DIR)/debug/$(BIN)
