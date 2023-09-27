@@ -1,6 +1,6 @@
 # TODO list
 
-- [ ] **Parse User Input**: Implement a mechanism to read and parse user input
+- [x] **Parse User Input**: Implement a mechanism to read and parse user input
 commands. This involves handling command lines, parsing arguments, and separating
 commands and parameters.
 - [ ] **Command Execution**: Implement the ability to execute basic commands

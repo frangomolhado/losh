@@ -1,4 +1,5 @@
 #include "input.h"
+#include "parser.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -10,6 +11,7 @@ int main(void) {
     while (run) {
         printf("$prompt$ "); // temporary while a proper prompt doesn't exist
         get_input(input);
+        TokenQueue *tk_queue = parse(input);
     }
 
     return EXIT_SUCCESS;
