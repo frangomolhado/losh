@@ -12,7 +12,7 @@ OBJ_DB = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/debug/%.o, $(SRC))
 OBJ_RL = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/release/%.o, $(SRC))
 BIN = losh
 
-.PHONY = all clean format debug_dirs release_dirs
+.PHONY = all clean format gdb debug debug_dirs release release_dirs
 
 all: debug
 
@@ -21,6 +21,9 @@ clean:
 
 format:
 	@clang-format src/*.c -style=file -i
+
+gdb:
+	@gdb $(BIN_DIR)/debug/$(BIN)
 
 # Debug compilation
 debug: debug_dirs $(BIN_DIR)/debug/$(BIN)
