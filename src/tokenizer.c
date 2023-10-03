@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "tokenizer.h"
 
 #include "input.h"
 
@@ -73,7 +73,7 @@ static Token *alloc_token(char *str, TokenType type) {
     return tk;
 }
 
-TokenQueue *parse(char input[INPUT_BUFFER_SIZE]) {
+TokenQueue *tokenize(char input[INPUT_BUFFER_SIZE]) {
     TokenQueue *q = alloc_token_queue();
 
     char *delimiter = " \n";

@@ -14,4 +14,4 @@ typedef struct token_queue TokenQueue;
 
 Token *dequeue(TokenQueue *q);
 
-TokenQueue *parse(char *input);
+TokenQueue *tokenize(char *input);
