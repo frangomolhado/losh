@@ -1,5 +1,6 @@
+#include "cmd_parser.h"
+#include "exec_cmd.h"
 #include "input.h"
-#include "tokenizer.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -11,7 +12,8 @@ int main(void) {
     while (run) {
         printf("$prompt$ "); // temporary while a proper prompt doesn't exist
         get_input(input);
-        TokenQueue *tk_queue = tokenize(input);
+        CommandList *cmdlist = get_commands(input);
+        exec_cmds(cmdlist);
     }
 
     return EXIT_SUCCESS;
