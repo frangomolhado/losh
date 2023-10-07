@@ -16,7 +16,7 @@ static char *join_paths(const char *root, const char *subdirs) {
 
 // FIXME: the bad use of realloc here can cause a dangling pointer in case of
 // lack of memory
-char *find_all_command(char *command) {
+char *find_all_command(const char *command) {
     char *result = NULL;
     char *delim = ":";
     char default_path[] = DEFAULT_PATH;
@@ -50,7 +50,7 @@ char *find_all_command(char *command) {
     return result;
 }
 
-char *find_command(char *command) {
+char *find_command(const char *command) {
     const char *delim = ":";
     char default_path[] = DEFAULT_PATH;
     char *dir_path = strtok(default_path, delim);
