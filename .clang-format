@@ -145,7 +145,6 @@ SpacesInLineCommentPrefix:
   Maximum:         -1
 SpacesInSquareBrackets: false
 SpaceBeforeSquareBrackets: false
-BitFieldColonSpacing: After
 Standard:        Latest
 StatementAttributeLikeMacros:
   - Q_EMIT
