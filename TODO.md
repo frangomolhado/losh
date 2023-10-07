@@ -3,7 +3,7 @@
 - [x] **Parse User Input**: Implement a mechanism to read and parse user input
 commands. This involves handling command lines, parsing arguments, and separating
 commands and parameters.
-- [ ] **Command Execution**: Implement the ability to execute basic commands
+- [x] **Command Execution**: Implement the ability to execute basic commands
 entered by the user. This involves forking a new process, loading the desired
 executable, and executing it with the appropriate arguments.
 - [ ] **Built-in Commands**: Add support for built-in commands such as `cd`,
