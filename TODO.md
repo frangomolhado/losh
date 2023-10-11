@@ -29,10 +29,14 @@ sessions.
 - [ ] **Tab Completion**: Provide tab completion support, where users can press
 the `tab` key to autocomplete commands, paths, and file names based on entered
 partial inputs.
+- [ ] **Creation of Script Language**: Allow users to make scripts for
+reusability and the capacity of handling more complex tasks. This involves
+creating an interpreted language that supports things like: variables, constants,
+control flow statements and functions.
 - [ ] **Customization and Configuration**: Allow users to customize the shell's
 behavior by configuring environment variables, defining aliases, or setting up
 startup scripts.
-- [ ] **Error Handling and User Feedback**: Implement informative error messages
-for incorrect commands or syntax errors. Provide meaningful feedback to users to
+- [ ] **Better Error Handling**: Implement informative error messages for
+incorrect commands or syntax errors. Provide meaningful feedback to users to
 help them understand and correct their inputs.
 - [ ] **Create README file**.
