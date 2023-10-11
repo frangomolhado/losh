@@ -8,9 +8,10 @@
 #include <string.h>
 
 // must be the amount of builtin commands
-#define BUILTINS_AMOUNT 1
+#define BUILTINS_AMOUNT 2
 
 // builtin commands definitions - initializations at the end of file
+static int32_t where(char **args);
 static int32_t which(char **args);
 
 // macro for easier node creation
@@ -54,7 +55,8 @@ static void insert_node(HashNode *node) {
 }
 
 void initialize_builtins(void) {
-    HashNode nodes[BUILTINS_AMOUNT] = { NODE("which", which, 0, -1, NULL) };
+    HashNode nodes[BUILTINS_AMOUNT] = { NODE("which", which, 0, -1, NULL),
+                                        NODE("where", where, 0, -1, NULL) };
 
     for (int i = 0; i < BUILTINS_AMOUNT; i++) {
         insert_node(&nodes[i]);
@@ -79,15 +81,37 @@ static bool is_builtin(const char *cmd) {
     return get_builtin(cmd) != NULL;
 }
 
+static int32_t where(char **args) {
+    int32_t status = 0;
+    const char *arg = args[1];
+    bool is_bltin = is_builtin(arg);
+    if (is_bltin) {
+        printf("%s: shell built-in command\n", arg);
+    }
+
+    char *paths_found = find_all_command(arg);
+    if (paths_found) {
+        puts(paths_found);
+        free(paths_found);
+    } else if (!is_bltin) {
+        status = -1;
+    }
+
+    printf("\n");
+
+    return status;
+}
+
 static int32_t which(char **args) {
     int32_t status = 0;
     const char *arg = args[1];
     if (is_builtin(arg)) {
-        puts("Shell built-in command.");
+        printf("%s: shell built-in command\n", arg);
     } else {
-        const char *result = find_command(arg);
+        char *result = find_command(arg);
         if (result) {
             puts(result);
+            free(result);
         } else {
             status = -1;
         }
