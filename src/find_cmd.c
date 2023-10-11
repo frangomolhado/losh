@@ -16,9 +16,9 @@ static char *join_paths(const char *root, const char *subdirs) {
 
 // FIXME: the bad use of realloc here can cause a dangling pointer in case of
 // lack of memory
-char *find_all_command(const char *command) {
+const char *find_all_command(const char *command) {
     char *result = NULL;
-    char *delim = ":";
+    const char *delim = ":";
     char default_path[] = DEFAULT_PATH;
     char *dir_path = strtok(default_path, delim);
     while (dir_path) {
@@ -50,12 +50,12 @@ char *find_all_command(const char *command) {
     return result;
 }
 
-char *find_command(const char *command) {
+const char *find_command(const char *cmd) {
     const char *delim = ":";
     char default_path[] = DEFAULT_PATH;
     char *dir_path = strtok(default_path, delim);
     while (dir_path) {
-        char *absolute_command_path = join_paths(dir_path, command);
+        char *absolute_command_path = join_paths(dir_path, cmd);
         struct stat file_info;
         if (stat(absolute_command_path, &file_info) == 0) {
             if (file_info.st_mode & S_IXUSR) {

@@ -2,4 +2,6 @@
 
 #include "cmd_parser.h"
 
-int exec_cmds(CommandList *cmdlist);
+#include <stdint.h>
+
+int32_t exec_cmd(CommandList *cmdlist);
