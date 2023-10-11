@@ -8,9 +8,10 @@
 #include <string.h>
 
 // must be the amount of builtin commands
-#define BUILTINS_AMOUNT 2
+#define BUILTINS_AMOUNT 3
 
 // builtin commands definitions - initializations at the end of file
+static int32_t echo(char **args);
 static int32_t where(char **args);
 static int32_t which(char **args);
 
@@ -55,8 +56,9 @@ static void insert_node(HashNode *node) {
 }
 
 void initialize_builtins(void) {
-    HashNode nodes[BUILTINS_AMOUNT] = { NODE("which", which, 0, -1, NULL),
-                                        NODE("where", where, 0, -1, NULL) };
+    HashNode nodes[BUILTINS_AMOUNT] = { NODE("echo", echo, 0, -1, NULL),
+                                        NODE("where", where, 0, -1, NULL),
+                                        NODE("which", which, 0, -1, NULL) };
 
     for (int i = 0; i < BUILTINS_AMOUNT; i++) {
         insert_node(&nodes[i]);
@@ -75,6 +77,20 @@ Builtin const *get_builtin(const char *cmd) {
     }
 
     return NULL;
+}
+
+static int32_t echo(char **args) {
+    int32_t status = 0;
+    size_t i = 1;
+    char *arg = args[i];
+    for (size_t j = i + 1; arg != NULL; j++) {
+        if (j == i + 2) printf(" ");
+        printf("%s", arg);
+        arg = args[j];
+    }
+    printf("\n\n");
+
+    return status;
 }
 
 static bool is_builtin(const char *cmd) {
@@ -96,7 +112,6 @@ static int32_t where(char **args) {
     } else if (!is_bltin) {
         status = -1;
     }
-
     printf("\n");
 
     return status;
@@ -116,7 +131,6 @@ static int32_t which(char **args) {
             status = -1;
         }
     }
-
     printf("\n");
 
     return status;
