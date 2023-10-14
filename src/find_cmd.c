@@ -20,7 +20,15 @@ PathsList *alloc_paths_list(void) {
     return pl;
 }
 
-static char *join_paths(const char *root, const char *relative) {
+void free_paths_list(PathsList *pl) {
+    for (size_t i = 0; i < pl->size; i++) {
+        free(pl->paths[i]);
+    }
+    free(pl->paths);
+    free(pl);
+}
+
+char *join_paths(const char *root, const char *relative) {
     size_t size = strlen(root) + 1 + strlen(relative) + 1;
     char *result = calloc(size, 0);
     if (result == NULL) {
@@ -91,16 +99,19 @@ char *find_all_command(const char *cmd) {
         return NULL;
     }
     const char *delim = ":";
-    char *dir_path = strtok(getenv("PATH"), delim);
+    char *env_path = strdup(getenv("PATH"));
+    char *dir_path = strtok(env_path, delim);
     while (dir_path) {
         char *cmd_path = join_paths(dir_path, cmd);
         if (cmd_path == NULL) {
+            free(env_path);
             return NULL;
         }
 
         if (is_binary(cmd_path)) {
             bool successfull = add_path(pl, cmd_path);
             if (!successfull) {
+                free(env_path);
                 return NULL;
             }
         }
@@ -110,23 +121,30 @@ char *find_all_command(const char *cmd) {
     }
 
     if (pl->paths == NULL) {
+        free(env_path);
         return NULL;
     }
 
-    return concatenate_paths(pl, '\n');
+    char *result = concatenate_paths(pl, '\n');
+    free_paths_list(pl);
+    free(env_path);
+    return result;
 }
 
 char *find_command(const char *cmd) {
     const char *delim = ":";
-    char *dir_path = strtok(getenv("PATH"), delim);
+    char *env_path = strdup(getenv("PATH"));
+    char *dir_path = strtok(env_path, delim);
     while (dir_path) {
         char *cmd_path = join_paths(dir_path, cmd);
         if (is_binary(cmd_path)) {
+            free(env_path);
             return cmd_path;
         }
         free(cmd_path);
         dir_path = strtok(NULL, delim);
     }
 
+    free(env_path);
     return NULL;
 }
