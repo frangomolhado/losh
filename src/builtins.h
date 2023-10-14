@@ -13,5 +13,5 @@ typedef struct builtin {
     int32_t max_args;
 } Builtin;
 
-void initialize_builtins(void);
+void init_builtins(void);
 Builtin const *get_builtin(const char *cmd);

@@ -1,3 +1,6 @@
+// needed to use `setenv` and `chdir` functions
+#define _POSIX_C_SOURCE 200112L
+
 #include "builtins.h"
 
 #include "find_cmd.h"
@@ -6,12 +9,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 // must be the amount of builtin commands
-#define BUILTINS_AMOUNT 3
+#define BUILTINS_AMOUNT 5
 
 // builtin commands definitions - initializations at the end of file
+static int32_t cd(char **args);
 static int32_t echo(char **args);
+static int32_t pwd(char **args);
 static int32_t where(char **args);
 static int32_t which(char **args);
 
@@ -29,7 +35,7 @@ typedef struct hash_node {
 
 static size_t hash(const char *str) {
     uint64_t hash = 5381;
-    int c;
+    int32_t c;
 
     while ((c = *(unsigned char *)str++)) {
         hash = ((hash << 5) + hash) + c; // hash * 33 + c
@@ -55,12 +61,14 @@ static void insert_node(HashNode *node) {
     }
 }
 
-void initialize_builtins(void) {
-    HashNode nodes[BUILTINS_AMOUNT] = { NODE("echo", echo, 0, -1, NULL),
+void init_builtins(void) {
+    HashNode nodes[BUILTINS_AMOUNT] = { NODE("cd", cd, 0, 1, NULL),
+                                        NODE("echo", echo, 0, -1, NULL),
+                                        NODE("pwd", pwd, 0, 0, NULL),
                                         NODE("where", where, 0, -1, NULL),
                                         NODE("which", which, 0, -1, NULL) };
 
-    for (int i = 0; i < BUILTINS_AMOUNT; i++) {
+    for (size_t i = 0; i < BUILTINS_AMOUNT; i++) {
         insert_node(&nodes[i]);
     }
 }
@@ -79,6 +87,24 @@ Builtin const *get_builtin(const char *cmd) {
     return NULL;
 }
 
+static int32_t cd(char **args) {
+    int32_t status = 0;
+    const char *path = args[1];
+    if (path == NULL) {
+        const char *home = getenv("HOME");
+        if (chdir(home) == 0) {
+            setenv("PWD", home, 1);
+        }
+    } else {
+        const char *new_dir = join_paths(getenv("PWD"), path);
+        if (chdir(new_dir) == 0) {
+            setenv("PWD", new_dir, 1);
+        }
+    }
+
+    return status;
+}
+
 static int32_t echo(char **args) {
     int32_t status = 0;
     size_t i = 1;
@@ -89,6 +115,19 @@ static int32_t echo(char **args) {
         arg = args[j];
     }
     printf("\n\n");
+
+    return status;
+}
+
+static int32_t pwd(char **args) {
+    int32_t status = 0;
+    char *pwd = getenv("PWD");
+    if (pwd == NULL) {
+        fprintf(stderr, "ERROR: can't find $PWD enviroment variable");
+        status = -1;
+    } else {
+        puts(pwd);
+    }
 
     return status;
 }
@@ -106,7 +145,7 @@ static int32_t where(char **args) {
     }
 
     char *paths_found = find_all_command(arg);
-    if (paths_found) {
+    if (paths_found != NULL) {
         puts(paths_found);
         free(paths_found);
     } else if (!is_bltin) {
@@ -124,7 +163,7 @@ static int32_t which(char **args) {
         printf("%s: shell built-in command\n", arg);
     } else {
         char *result = find_command(arg);
-        if (result) {
+        if (result != NULL) {
             puts(result);
             free(result);
         } else {

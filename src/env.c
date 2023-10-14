@@ -1,4 +1,4 @@
-// needed to use `setenv` function
+// needed to use `setenv` and `chdir` functions
 #define _POSIX_C_SOURCE 200112L
 
 #include "env.h"
@@ -24,4 +24,7 @@ void init_env(void) {
     setenv("PWD", pw->pw_dir, 1);
     setenv("PATH", PATH, 1);
     setenv("SHELL", "./bin/debug/losh", 1);
+
+    // change current directory to $HOME
+    chdir(pw->pw_dir);
 }

@@ -1,5 +1,6 @@
 #include "builtins.h"
 #include "cmd_parser.h"
+#include "env.h"
 #include "exec_cmd.h"
 #include "input.h"
 
@@ -8,7 +9,8 @@
 #include <stdlib.h>
 
 int main(void) {
-    initialize_builtins();
+    init_env();
+    init_builtins();
 
     char input[INPUT_BUFFER_SIZE];
     bool run = true;
