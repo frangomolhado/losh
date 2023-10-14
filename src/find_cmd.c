@@ -122,14 +122,11 @@ char *find_command(const char *cmd) {
     char default_path[] = DEFAULT_PATH;
     char *dir_path = strtok(default_path, delim);
     while (dir_path) {
-        char *absolute_command_path = join_paths(dir_path, cmd);
-        struct stat file_info;
-        if (stat(absolute_command_path, &file_info) == 0) {
-            if (file_info.st_mode & S_IXUSR) {
-                return absolute_command_path;
-            }
+        char *cmd_path = join_paths(dir_path, cmd);
+        if (is_binary(cmd_path)) {
+            return cmd_path;
         }
-        free(absolute_command_path);
+        free(cmd_path);
         dir_path = strtok(NULL, delim);
     }
 
