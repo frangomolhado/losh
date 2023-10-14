@@ -1,4 +1,4 @@
-// necessary to use `strdup`
+// needed to use `strdup` function
 #define _POSIX_C_SOURCE 200809L
 
 #include "find_cmd.h"
@@ -91,8 +91,7 @@ char *find_all_command(const char *cmd) {
         return NULL;
     }
     const char *delim = ":";
-    char default_path[] = DEFAULT_PATH;
-    char *dir_path = strtok(default_path, delim);
+    char *dir_path = strtok(getenv("PATH"), delim);
     while (dir_path) {
         char *cmd_path = join_paths(dir_path, cmd);
         if (cmd_path == NULL) {
@@ -119,8 +118,7 @@ char *find_all_command(const char *cmd) {
 
 char *find_command(const char *cmd) {
     const char *delim = ":";
-    char default_path[] = DEFAULT_PATH;
-    char *dir_path = strtok(default_path, delim);
+    char *dir_path = strtok(getenv("PATH"), delim);
     while (dir_path) {
         char *cmd_path = join_paths(dir_path, cmd);
         if (is_binary(cmd_path)) {
