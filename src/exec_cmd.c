@@ -18,6 +18,7 @@ static int32_t exec_binary(const Command *cmd) {
         execv(cmd_path, cmd->args);
     } else {
         waitpid(pid, &pid_status, 0);
+        printf("\n");
     }
 
     return pid_status;
