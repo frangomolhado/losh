@@ -12,10 +12,11 @@
 #include <unistd.h>
 
 // must be the amount of builtin commands
-#define BUILTINS_AMOUNT 5
+#define BUILTINS_AMOUNT 6
 
 // builtin commands definitions - initializations at the end of file
 static int32_t cd(char **args);
+static int32_t builtin_exit(char **args);
 static int32_t echo(char **args);
 static int32_t pwd(char **args);
 static int32_t where(char **args);
@@ -63,6 +64,7 @@ static void insert_node(HashNode *node) {
 
 void init_builtins(void) {
     HashNode nodes[BUILTINS_AMOUNT] = { NODE("cd", cd, 0, 1, NULL),
+                                        NODE("exit", builtin_exit, 0, 0, NULL),
                                         NODE("echo", echo, 0, -1, NULL),
                                         NODE("pwd", pwd, 0, 0, NULL),
                                         NODE("where", where, 0, -1, NULL),
@@ -103,6 +105,11 @@ static int32_t cd(char **args) {
     }
 
     return status;
+}
+
+static int32_t builtin_exit(char **args) {
+    (void)args;
+    exit(EXIT_SUCCESS);
 }
 
 static int32_t echo(char **args) {
