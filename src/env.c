@@ -26,5 +26,5 @@ void init_env(void) {
     setenv("SHELL", "./bin/debug/losh", 1);
 
     // change current directory to $HOME
-    chdir(pw->pw_dir);
+    (void)chdir(pw->pw_dir);
 }

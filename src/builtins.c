@@ -127,6 +127,7 @@ static int32_t echo(char **args) {
 }
 
 static int32_t pwd(char **args) {
+    (void)args;
     int32_t status = 0;
     char *pwd = getenv("PWD");
     if (pwd == NULL) {
