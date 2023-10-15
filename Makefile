@@ -1,7 +1,7 @@
 CC = clang
 CFLAGS = -std=c17 -Wall -Wextra
 DBFLAGS = $(CFLAGS) -g3 -Og
-RLFLAGS = $(CFLAGS) -D_FORTIFY_SOURCE=2 -O3
+RLFLAGS = $(CFLAGS) -Werror -D_FORTIFY_SOURCE=2 -O3
 
 SRC_DIR = src
 OBJ_DIR = obj
