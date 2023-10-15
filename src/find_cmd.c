@@ -3,30 +3,11 @@
 
 #include "find_cmd.h"
 
-#include <stdbool.h>
+#include "lib.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-
-typedef struct {
-    char **paths;
-    size_t size;
-} PathsList;
-
-PathsList *alloc_paths_list(void) {
-    PathsList *pl = malloc(sizeof(PathsList));
-    pl->paths = NULL;
-    pl->size = 0;
-    return pl;
-}
-
-void free_paths_list(PathsList *pl) {
-    for (size_t i = 0; i < pl->size; i++) {
-        free(pl->paths[i]);
-    }
-    free(pl->paths);
-    free(pl);
-}
 
 char *join_paths(const char *root, const char *relative) {
     size_t size = strlen(root) + 1 + strlen(relative) + 1;
@@ -50,54 +31,8 @@ static bool is_binary(const char *path) {
     return false;
 }
 
-static bool add_path(PathsList *pl, const char *path) {
-    if (pl->paths == NULL) {
-        pl->paths = malloc(sizeof(char *));
-        if (pl->paths == NULL) {
-            return false;
-        }
-        pl->paths[pl->size++] = strdup(path);
-    } else {
-        char **tmp = realloc(pl->paths, sizeof(char *) * (pl->size + 1));
-        if (tmp == NULL) {
-            return false;
-        }
-        pl->paths = tmp;
-        pl->paths[pl->size++] = strdup(path);
-    }
-
-    return true;
-}
-
-static char *concatenate_paths(PathsList *pl, char c) {
-    // starter value = number of `c` that will be necessary
-    size_t size = pl->size - 1;
-    for (size_t i = 0; i < pl->size; i++) {
-        size += strlen(pl->paths[i]);
-    }
-
-    char *result = malloc(size + 1);
-    if (result == NULL) {
-        return NULL;
-    }
-
-    size_t offset = 0;
-    for (size_t i = 0; i < pl->size; i++) {
-        strcpy(result + offset, pl->paths[i]);
-        offset += strlen(pl->paths[i]);
-        result[offset++] = c;
-    }
-    // change last '\n' to '\0'
-    result[offset - 1] = '\0';
-
-    return result;
-}
-
 char *find_all_command(const char *cmd) {
-    PathsList *pl = alloc_paths_list();
-    if (pl == NULL) {
-        return NULL;
-    }
+    StrVector *sv = alloc_str_vector();
     const char *delim = ":";
     char *env_path = strdup(getenv("PATH"));
     char *dir_path = strtok(env_path, delim);
@@ -109,8 +44,8 @@ char *find_all_command(const char *cmd) {
         }
 
         if (is_binary(cmd_path)) {
-            bool successfull = add_path(pl, cmd_path);
-            if (!successfull) {
+            int32_t successfull = add_str(sv, cmd_path);
+            if (successfull == -1) {
                 free(env_path);
                 return NULL;
             }
@@ -120,13 +55,13 @@ char *find_all_command(const char *cmd) {
         dir_path = strtok(NULL, delim);
     }
 
-    if (pl->paths == NULL) {
+    if (sv->strs == NULL) {
         free(env_path);
         return NULL;
     }
 
-    char *result = concatenate_paths(pl, '\n');
-    free_paths_list(pl);
+    char *result = concatenate_strs(sv, '\n');
+    free_str_vector(sv);
     free(env_path);
     return result;
 }
