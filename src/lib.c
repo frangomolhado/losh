@@ -41,6 +41,10 @@ int32_t add_str(StrVector *sv, const char *str) {
 }
 
 char *concatenate_strs(StrVector *sv, char c) {
+    if (sv->size == 0) {
+        return "\0";
+    }
+
     // starter value = number of `c` that will be necessary
     size_t size = sv->size - 1;
     for (size_t i = 0; i < sv->size; i++) {
