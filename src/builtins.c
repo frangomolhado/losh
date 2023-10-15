@@ -1,11 +1,11 @@
-// needed to use `setenv` and `chdir` functions
-#define _POSIX_C_SOURCE 200112L
+// needed to use `setenv`, `chdir` and `strdup` functions
+#define _POSIX_C_SOURCE 200809L
 
 #include "builtins.h"
 
 #include "find_cmd.h"
+#include "lib.h"
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -107,14 +107,21 @@ static int32_t cd(char **args) {
 
 static int32_t echo(char **args) {
     int32_t status = 0;
+    StrVector *sv = alloc_str_vector();
     size_t i = 1;
-    char *arg = args[i];
-    for (size_t j = i + 1; arg != NULL; j++) {
-        if (j == i + 2) printf(" ");
-        printf("%s", arg);
-        arg = args[j];
+    for (char *arg = args[i]; arg != NULL; arg = args[++i]) {
+        if (arg[0] == '$') {
+            char *tmp = getenv(arg + 1);
+            if (tmp == NULL) {
+                continue;
+            } else {
+                arg = tmp;
+            }
+        }
+        add_str(sv, arg);
     }
-    printf("\n\n");
+    printf("%s\n\n", concatenate_strs(sv, ' '));
+    free_str_vector(sv);
 
     return status;
 }
