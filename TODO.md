@@ -6,7 +6,7 @@ commands and parameters.
 - [x] **Command Execution**: Implement the ability to execute basic commands
 entered by the user. This involves forking a new process, loading the desired
 executable, and executing it with the appropriate arguments.
-- [ ] **Built-in Commands**: Add support for built-in commands such as `cd`,
+- [x] **Built-in Commands**: Add support for built-in commands such as `cd`,
 `pwd`, `echo`, or `exit`. These commands should be executed within the shell
 process itself, without spawning a new process.
 - [ ] **Input/Output Redirection**: Extend your shell to handle input and output
