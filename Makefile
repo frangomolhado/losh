@@ -24,7 +24,7 @@ format:
 	@clang-format src/*.c -style=file -i
 
 .PHONY: gdb
-gdb:
+gdb: debug
 	@gdb $(BIN_DIR)/debug/$(BIN)
 
 # Debug compilation
