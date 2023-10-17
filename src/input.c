@@ -5,8 +5,8 @@
 
 void get_input(char input[INPUT_BUFFER_SIZE]) {
     char *tmp = fgets(input, INPUT_BUFFER_SIZE, stdin);
-    if (!tmp) {
-        strcpy(input, "\0");
+    if (tmp == NULL || tmp[0] == '\n') {
+        input[0] = '\0';
         clearerr(stdin);
     }
 }

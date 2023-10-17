@@ -53,6 +53,10 @@ static void cmdlist_push(CommandList *cmdlist, Command *cmd) {
 
 // TODO: handle memory allocation fails
 CommandList *get_commands(char input[INPUT_BUFFER_SIZE]) {
+    if (input[0] == '\0') {
+        return NULL;
+    }
+
     CommandList *cmdlist = alloc_cmdlist();
     Command *cmd = alloc_cmd();
 

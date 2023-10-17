@@ -30,6 +30,10 @@ static int32_t exec_builtin(Builtin const *builtin, char **args) {
 }
 
 int32_t exec_cmd(CommandList *cmdlist) {
+    if (cmdlist == NULL) {
+        return -1;
+    }
+
     const char *cmd = cmdlist->cmds[0].args[0];
     Builtin const *builtin = get_builtin(cmd);
     if (builtin) {
