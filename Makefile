@@ -37,7 +37,7 @@ $(BIN_DIR)/debug/$(BIN): $(OBJ_DB)
 $(OBJ_DIR)/debug/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $< $(DBFLAGS) -o $@
 
-.PHONY: debug_dir
+.PHONY: debug_dirs
 debug_dirs: $(OBJ_DIR)/debug $(BIN_DIR)/debug
 
 $(OBJ_DIR)/debug:
