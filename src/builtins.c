@@ -89,6 +89,8 @@ Builtin const *get_builtin(const char *cmd) {
     return NULL;
 }
 
+// TODO: make go back using ".."
+// FIXME: breaking with `cd dev/cpp` and others
 static int32_t cd(char **args) {
     int32_t status = 0;
     const char *path = args[1];

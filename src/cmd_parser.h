@@ -14,6 +14,7 @@ typedef struct {
     Command *cmds;
     size_t size;
     size_t capacity;
+    char *input;
     char *output;
 } CommandList;
 

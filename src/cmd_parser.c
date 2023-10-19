@@ -9,6 +9,7 @@
 #include <string.h>
 
 #define TK_OUTPUT_REDIRECT ">"
+#define TK_INPUT_REDIRECT "<"
 
 static Command *alloc_cmd(void) {
     Command *c = malloc(sizeof(Command));
@@ -36,6 +37,7 @@ static CommandList *alloc_cmdlist(void) {
     l->cmds = NULL;
     l->size = 0;
     l->capacity = 4;
+    l->input = NULL;
     l->output = NULL;
 
     return l;
@@ -43,6 +45,7 @@ static CommandList *alloc_cmdlist(void) {
 
 void free_cmds(CommandList *cmdlist) {
     free(cmdlist->cmds);
+    free(cmdlist->input);
     free(cmdlist->output);
     free(cmdlist);
 }
@@ -75,7 +78,12 @@ CommandList *get_cmds(char input[INPUT_BUFFER_SIZE]) {
     const char *delimiter = " \n";
     char *tk = strtok(input, delimiter);
     while (tk) {
-        if (strcmp(tk, TK_OUTPUT_REDIRECT) == 0) {
+        if (strcmp(tk, TK_INPUT_REDIRECT) == 0) {
+            tk = strtok(NULL, delimiter);
+            if (cmdlist->input == NULL) {
+                cmdlist->input = strdup(tk);
+            }
+        } else if (strcmp(tk, TK_OUTPUT_REDIRECT) == 0) {
             tk = strtok(NULL, delimiter);
             if (cmdlist->output == NULL) {
                 cmdlist->output = strdup(tk);
@@ -83,6 +91,7 @@ CommandList *get_cmds(char input[INPUT_BUFFER_SIZE]) {
         } else {
             cmd_add_arg(cmd, tk);
         }
+
         tk = strtok(NULL, delimiter);
     }
 
