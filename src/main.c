@@ -17,8 +17,9 @@ int main(void) {
     while (run) {
         printf("losh$ "); // temporary while a proper prompt doesn't exist
         get_input(input);
-        CommandList *cmdlist = get_commands(input);
+        CommandList *cmdlist = get_cmds(input);
         exec_cmd(cmdlist);
+        free_cmds(cmdlist);
     }
 
     return EXIT_SUCCESS;

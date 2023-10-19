@@ -1,9 +1,14 @@
+// needed to use `strdup` function
+#define _POSIX_C_SOURCE 200809L
+
 #include "cmd_parser.h"
 
 #include "input.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+#define TK_OUTPUT_REDIRECT ">"
 
 static Command *alloc_cmd(void) {
     Command *c = malloc(sizeof(Command));
@@ -15,9 +20,9 @@ static Command *alloc_cmd(void) {
 }
 
 static void cmd_add_arg(Command *cmd, char *arg) {
-    if (!cmd->args) {
+    if (cmd->args == NULL) {
         cmd->args = malloc(sizeof(char *) * cmd->args_capacity);
-    } else if (cmd->args_size >= cmd->args_capacity) {
+    } else if (cmd->args_size == cmd->args_capacity) {
         // FIXME: the bad use of realloc here can cause a dangling pointer in
         // case of lack of memory
         cmd->args_capacity *= 2;
@@ -31,12 +36,19 @@ static CommandList *alloc_cmdlist(void) {
     l->cmds = NULL;
     l->size = 0;
     l->capacity = 4;
+    l->output = NULL;
 
     return l;
 }
 
+void free_cmds(CommandList *cmdlist) {
+    free(cmdlist->cmds);
+    free(cmdlist->output);
+    free(cmdlist);
+}
+
 static void cmdlist_push(CommandList *cmdlist, Command *cmd) {
-    if (!cmdlist->cmds) {
+    if (cmdlist->cmds == NULL) {
         cmdlist->cmds = malloc(sizeof(Command) * cmdlist->capacity);
     } else if (cmdlist->size >= cmdlist->capacity) {
         // FIXME: the bad use of realloc here can cause a dangling pointer in
@@ -52,7 +64,7 @@ static void cmdlist_push(CommandList *cmdlist, Command *cmd) {
 }
 
 // TODO: handle memory allocation fails
-CommandList *get_commands(char input[INPUT_BUFFER_SIZE]) {
+CommandList *get_cmds(char input[INPUT_BUFFER_SIZE]) {
     if (input[0] == '\0') {
         return NULL;
     }
@@ -63,7 +75,14 @@ CommandList *get_commands(char input[INPUT_BUFFER_SIZE]) {
     const char *delimiter = " \n";
     char *tk = strtok(input, delimiter);
     while (tk) {
-        cmd_add_arg(cmd, tk);
+        if (strcmp(tk, TK_OUTPUT_REDIRECT) == 0) {
+            tk = strtok(NULL, delimiter);
+            if (cmdlist->output == NULL) {
+                cmdlist->output = strdup(tk);
+            }
+        } else {
+            cmd_add_arg(cmd, tk);
+        }
         tk = strtok(NULL, delimiter);
     }
 

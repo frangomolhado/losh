@@ -14,6 +14,9 @@ typedef struct {
     Command *cmds;
     size_t size;
     size_t capacity;
+    char *output;
 } CommandList;
 
-CommandList *get_commands(char input[INPUT_BUFFER_SIZE]);
+void free_cmds(CommandList *cmdlist);
+
+CommandList *get_cmds(char input[INPUT_BUFFER_SIZE]);

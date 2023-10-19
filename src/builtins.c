@@ -127,7 +127,7 @@ static int32_t echo(char **args) {
         }
         add_str(sv, arg);
     }
-    printf("%s\n\n", concatenate_strs(sv, ' '));
+    printf("%s\n", concatenate_strs(sv, ' '));
     free_str_vector(sv);
 
     return status;
