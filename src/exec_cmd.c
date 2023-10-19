@@ -29,8 +29,7 @@ static void redirect_input(ExecFuntion func, char **args, char *input_file) {
 
 static void redirect_output(ExecFuntion func, char **args, char *output_file) {
     int32_t original_stdout = dup(STDOUT_FILENO);
-    int32_t file_descriptor =
-        open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    int32_t file_descriptor = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (file_descriptor == -1) {
         // TODO: handle error opening file
     }
@@ -45,8 +44,8 @@ static void redirect_output(ExecFuntion func, char **args, char *output_file) {
     close(original_stdout);
 }
 
-static void redirect_input_output(ExecFuntion func, char **args,
-                                  char *input_file, char *output_file) {
+static void redirect_input_output(ExecFuntion func, char **args, char *input_file,
+                                  char *output_file) {
     int32_t original_stdin = dup(STDOUT_FILENO);
     int32_t input_descriptor = open(input_file, O_RDONLY);
     if (input_descriptor == -1) {
@@ -54,8 +53,7 @@ static void redirect_input_output(ExecFuntion func, char **args,
     }
 
     int32_t original_stdout = dup(STDOUT_FILENO);
-    int32_t output_descriptor =
-        open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    int32_t output_descriptor = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (output_descriptor == -1) {
         // TODO: handle error opening file
     }
@@ -77,8 +75,7 @@ static void redirect_input_output(ExecFuntion func, char **args,
     close(original_stdout);
 }
 
-static int32_t fork_exec(ExecFuntion func, char **args, char *input_file,
-                         char *output_file) {
+static int32_t fork_exec(ExecFuntion func, char **args, char *input_file, char *output_file) {
     pid_t pid = fork();
     int32_t pid_status = 0;
     if (pid == -1) {
@@ -121,8 +118,7 @@ int32_t exec_cmd(CommandList *cmdlist) {
     if (builtin == NULL) {
         status = fork_exec(exec_binary, args, cmdlist->input, cmdlist->output);
     } else if (cmdlist->input != NULL || cmdlist->output != NULL) {
-        status =
-            fork_exec(builtin->handler, args, cmdlist->input, cmdlist->output);
+        status = fork_exec(builtin->handler, args, cmdlist->input, cmdlist->output);
         printf("\n");
     } else {
         status = builtin->handler(args);

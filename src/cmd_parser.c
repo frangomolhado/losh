@@ -57,8 +57,7 @@ static void cmdlist_push(CommandList *cmdlist, Command *cmd) {
         // FIXME: the bad use of realloc here can cause a dangling pointer in
         // case of lack of memory
         cmdlist->capacity *= 2;
-        cmdlist->cmds =
-            realloc(cmdlist->cmds, sizeof(Command) * cmdlist->capacity);
+        cmdlist->cmds = realloc(cmdlist->cmds, sizeof(Command) * cmdlist->capacity);
         cmdlist->cmds[cmdlist->size++] = *cmd;
     }
 

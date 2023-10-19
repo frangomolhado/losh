@@ -63,12 +63,11 @@ static void insert_node(HashNode *node) {
 }
 
 void init_builtins(void) {
-    HashNode nodes[BUILTINS_AMOUNT] = { NODE("cd", cd, 0, 1, NULL),
-                                        NODE("exit", builtin_exit, 0, 0, NULL),
-                                        NODE("echo", echo, 0, -1, NULL),
-                                        NODE("pwd", pwd, 0, 0, NULL),
-                                        NODE("where", where, 0, -1, NULL),
-                                        NODE("which", which, 0, -1, NULL) };
+    HashNode nodes[BUILTINS_AMOUNT] = {
+        NODE("cd", cd, 0, 1, NULL),        NODE("exit", builtin_exit, 0, 0, NULL),
+        NODE("echo", echo, 0, -1, NULL),   NODE("pwd", pwd, 0, 0, NULL),
+        NODE("where", where, 0, -1, NULL), NODE("which", which, 0, -1, NULL)
+    };
 
     for (size_t i = 0; i < BUILTINS_AMOUNT; i++) {
         insert_node(&nodes[i]);
