@@ -5,13 +5,15 @@
 #include "find_cmd.h"
 
 #include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
 typedef int32_t (*ExecFuntion)(char **args);
 
-static void redirect_input(ExecFuntion func, char **args, char *input_file) {
+static int32_t redirect_input(ExecFuntion func, char **args, char *input_file) {
     int32_t original_stdin = dup(STDOUT_FILENO);
     int32_t file_descriptor = open(input_file, O_RDONLY);
     if (file_descriptor == -1) {
@@ -21,13 +23,15 @@ static void redirect_input(ExecFuntion func, char **args, char *input_file) {
     dup2(file_descriptor, STDIN_FILENO);
     close(file_descriptor);
 
-    func(args);
+    int32_t status = func(args);
 
     dup2(original_stdin, STDIN_FILENO);
     close(original_stdin);
+
+    return status;
 }
 
-static void redirect_output(ExecFuntion func, char **args, char *output_file) {
+static int32_t redirect_output(ExecFuntion func, char **args, char *output_file) {
     int32_t original_stdout = dup(STDOUT_FILENO);
     int32_t file_descriptor = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (file_descriptor == -1) {
@@ -37,15 +41,17 @@ static void redirect_output(ExecFuntion func, char **args, char *output_file) {
     dup2(file_descriptor, STDOUT_FILENO);
     close(file_descriptor);
 
-    func(args);
+    int32_t status = func(args);
 
     fflush(stdout);
     dup2(original_stdout, STDOUT_FILENO);
     close(original_stdout);
+
+    return status;
 }
 
-static void redirect_input_output(ExecFuntion func, char **args, char *input_file,
-                                  char *output_file) {
+static int32_t redirect_input_output(ExecFuntion func, char **args, char *input_file,
+                                     char *output_file) {
     int32_t original_stdin = dup(STDOUT_FILENO);
     int32_t input_descriptor = open(input_file, O_RDONLY);
     if (input_descriptor == -1) {
@@ -64,7 +70,7 @@ static void redirect_input_output(ExecFuntion func, char **args, char *input_fil
     dup2(output_descriptor, STDOUT_FILENO);
     close(output_descriptor);
 
-    func(args);
+    int32_t status = func(args);
 
     fflush(stdout);
 
@@ -73,26 +79,44 @@ static void redirect_input_output(ExecFuntion func, char **args, char *input_fil
 
     dup2(original_stdout, STDOUT_FILENO);
     close(original_stdout);
+
+    return status;
 }
 
-static int32_t fork_exec(ExecFuntion func, char **args, char *input_file, char *output_file) {
+// TODO: find better way to pass these arguments
+static int32_t fork_exec(ExecFuntion func, char **args, char *input_file, char *output_file,
+                         bool is_background_process) {
     pid_t pid = fork();
     int32_t pid_status = 0;
     if (pid == -1) {
         // TODO: handle error
     } else if (pid == 0) {
+        int32_t status = 0;
         if (input_file == NULL && output_file == NULL) {
-            func(args);
+            status = func(args);
         } else if (input_file != NULL && output_file == NULL) {
-            redirect_input(func, args, input_file);
+            status = redirect_input(func, args, input_file);
         } else if (input_file == NULL && output_file != NULL) {
-            redirect_output(func, args, output_file);
+            status = redirect_output(func, args, output_file);
         } else {
-            redirect_input_output(func, args, input_file, output_file);
+            status = redirect_input_output(func, args, input_file, output_file);
+        }
+
+        if (status == 0) {
+            exit(EXIT_SUCCESS);
+        } else {
+            exit(EXIT_FAILURE);
         }
     } else {
-        waitpid(pid, &pid_status, 0);
-        printf("\n");
+        if (is_background_process) {
+            pid_t ppid = getpid();
+            printf("[%d] %d\n", ppid, pid);
+            waitpid(pid, &pid_status, 0);
+            printf("[%d] %d done\n", ppid, pid);
+        } else {
+            waitpid(pid, &pid_status, 0);
+            printf("\n");
+        }
     }
 
     return pid_status;
@@ -116,9 +140,14 @@ int32_t exec_cmd(CommandList *cmdlist) {
     // TODO: handle errors of incorrect number of min_args and max_args sizes
     // in builtin execution
     if (builtin == NULL) {
-        status = fork_exec(exec_binary, args, cmdlist->input, cmdlist->output);
-    } else if (cmdlist->input != NULL || cmdlist->output != NULL) {
-        status = fork_exec(builtin->handler, args, cmdlist->input, cmdlist->output);
+        status = fork_exec(exec_binary, args, cmdlist->input, cmdlist->output,
+                           cmdlist->background_process);
+        if (cmdlist->background_process) {
+            printf("\n");
+        }
+    } else if (cmdlist->input != NULL || cmdlist->output != NULL || cmdlist->background_process) {
+        status = fork_exec(builtin->handler, args, cmdlist->input, cmdlist->output,
+                           cmdlist->background_process);
         printf("\n");
     } else {
         status = builtin->handler(args);

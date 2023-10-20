@@ -10,6 +10,7 @@
 
 #define TK_OUTPUT_REDIRECT ">"
 #define TK_INPUT_REDIRECT "<"
+#define TK_BACKGROUND_PROCESS "&"
 
 static Command *alloc_cmd(void) {
     Command *c = malloc(sizeof(Command));
@@ -39,6 +40,7 @@ static CommandList *alloc_cmdlist(void) {
     l->capacity = 4;
     l->input = NULL;
     l->output = NULL;
+    l->background_process = false;
 
     return l;
 }
@@ -87,6 +89,8 @@ CommandList *get_cmds(char input[INPUT_BUFFER_SIZE]) {
             if (cmdlist->output == NULL) {
                 cmdlist->output = strdup(tk);
             }
+        } else if (strcmp(tk, TK_BACKGROUND_PROCESS) == 0) {
+            cmdlist->background_process = true;
         } else {
             cmd_add_arg(cmd, tk);
         }

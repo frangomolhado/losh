@@ -167,7 +167,6 @@ static int32_t where(char **args) {
     } else if (!is_bltin) {
         status = -1;
     }
-    printf("\n");
 
     return status;
 }
@@ -186,7 +185,6 @@ static int32_t which(char **args) {
             status = -1;
         }
     }
-    printf("\n");
 
     return status;
 }

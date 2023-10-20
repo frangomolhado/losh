@@ -12,7 +12,7 @@ process itself, without spawning a new process.
 - [x] **Input/Output Redirection**: Extend your shell to handle input and output
 redirection using the `<` and `>` symbols. Allow users to redirect input from a
 file and redirect output to a file.
-- [ ] **Background Process Execution**: Enable the execution of commands in the
+- [x] **Background Process Execution**: Enable the execution of commands in the
 background by appending an `&` at the end of the command. Implement the ability
 to run a command in the background while still allowing the user to enter new
 commands.
