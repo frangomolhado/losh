@@ -21,7 +21,7 @@ clean:
 
 .PHONY: format
 format:
-	@clang-format src/*.c -style=file -i
+	@clang-format $(SRC_DIR)/*.c -style=file -i
 
 .PHONY: gdb
 gdb: debug
