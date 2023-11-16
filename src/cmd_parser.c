@@ -46,10 +46,12 @@ static CommandList *alloc_cmdlist(void) {
 }
 
 void free_cmds(CommandList *cmdlist) {
-    free(cmdlist->cmds);
-    free(cmdlist->input);
-    free(cmdlist->output);
-    free(cmdlist);
+    if (cmdlist != NULL) {
+        free(cmdlist->cmds);
+        free(cmdlist->input);
+        free(cmdlist->output);
+        free(cmdlist);
+    }
 }
 
 static void cmdlist_push(CommandList *cmdlist, Command *cmd) {

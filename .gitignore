@@ -2,3 +2,7 @@
 
 obj/
 bin/
+
+# make debugging files
+*.gcda
+*.gcno
