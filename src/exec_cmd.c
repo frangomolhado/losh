@@ -11,9 +11,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-typedef int32_t (*ExecFuntion)(char **args);
+typedef int32_t (*ExecFunction)(char **args);
 
-static int32_t redirect_input(ExecFuntion func, char **args, char *input_file) {
+static int32_t redirect_input(ExecFunction func, char **args, char *input_file) {
     int32_t original_stdin = dup(STDOUT_FILENO);
     int32_t file_descriptor = open(input_file, O_RDONLY);
     if (file_descriptor == -1) {
@@ -31,7 +31,7 @@ static int32_t redirect_input(ExecFuntion func, char **args, char *input_file) {
     return status;
 }
 
-static int32_t redirect_output(ExecFuntion func, char **args, char *output_file) {
+static int32_t redirect_output(ExecFunction func, char **args, char *output_file) {
     int32_t original_stdout = dup(STDOUT_FILENO);
     int32_t file_descriptor = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (file_descriptor == -1) {
@@ -50,7 +50,7 @@ static int32_t redirect_output(ExecFuntion func, char **args, char *output_file)
     return status;
 }
 
-static int32_t redirect_input_output(ExecFuntion func, char **args, char *input_file,
+static int32_t redirect_input_output(ExecFunction func, char **args, char *input_file,
                                      char *output_file) {
     int32_t original_stdin = dup(STDOUT_FILENO);
     int32_t input_descriptor = open(input_file, O_RDONLY);
@@ -84,7 +84,7 @@ static int32_t redirect_input_output(ExecFuntion func, char **args, char *input_
 }
 
 // TODO: find better way to pass these arguments
-static int32_t fork_exec(ExecFuntion func, char **args, char *input_file, char *output_file,
+static int32_t fork_exec(ExecFunction func, char **args, char *input_file, char *output_file,
                          bool is_background_process) {
     pid_t pid = fork();
     int32_t pid_status = 0;

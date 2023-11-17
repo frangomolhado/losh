@@ -40,7 +40,7 @@ clean:
 
 .PHONY: format
 format:
-	@clang-format $(SRC_DIR)/*.c $(TESTS_DIR)/*.cpp -style=file -i
+	@clang-format $(SRC_DIR)/*.c $(TESTS_DIR)/*.cc -style=file -i
 
 # debug compilation
 .PHONY: gdb
