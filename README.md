@@ -79,13 +79,13 @@ as `make && gdb bin/debug/losh`.
 
 ## Testing
 
-Disclaimer: unfortunately, to run the tests of this project, it is necessary to
-have installed on the machine the [GoogleTest](https://github.com/google/googletest)
+Unfortunately, to run the tests of this project, it is necessary to have
+installed on the machine the [GoogleTest](https://github.com/google/googletest)
 framework, since it is not downloaded on the fly when trying to run the tests
 for the first time.
 
-Since the GoogleTest framework is written in C++, the test files also happen to
-be C++ files, but of course calling the source code in C ([FFI](
+Since the GoogleTest framework is written in C++, the test files also happen
+to be C++ files, but of course calling the source code in C ([FFI](
 https://en.wikipedia.org/wiki/Foreign_function_interface)).
 
 To run the tests, you can use the command below, which will also compile the
