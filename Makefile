@@ -1,34 +1,34 @@
-# shell variables
-CC = clang
-CFLAGS = -std=c17 -Wall -Wextra
-DBFLAGS = $(CFLAGS) -fsanitize=undefined,address -g3 -Og
-RLFLAGS = $(CFLAGS) -Werror -D_FORTIFY_SOURCE=2 -O3
+# bin variables
+CC := clang
+CFLAGS := -std=c17 -Wall -Wextra
+DBFLAGS := $(CFLAGS) -fsanitize=undefined,address -g3 -Og
+RLFLAGS := $(CFLAGS) -Werror -D_FORTIFY_SOURCE=2 -O3
 
-SRC_DIR = src
-OBJ_DIR = obj
-BIN_DIR = bin
+SRC_DIR := src
+OBJ_DIR := obj
+BIN_DIR := bin
 
-MAIN = $(SRC_DIR)/main.c
-SRC = $(wildcard $(SRC_DIR)/*.c)
+MAIN := $(SRC_DIR)/main.c
+SRC := $(wildcard $(SRC_DIR)/*.c)
 SRC := $(filter-out $(MAIN), $(SRC))
-OBJ_DB = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/debug/%.o, $(SRC))
-OBJ_RL = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/release/%.o, $(SRC))
-BIN = losh
+OBJ_DB := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/debug/%.o, $(SRC))
+OBJ_RL := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/release/%.o, $(SRC))
+BIN := losh
 
 # tests variables
-CXX = clang++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -coverage -fsanitize=undefined,address -O2
-LIBS = -lgtest
+CXX := clang++
+CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -coverage -fsanitize=undefined,address -O2
+LIBS := -lgtest
 
-TESTS_DIR = tests
-TESTS_OBJ_DIR = $(TESTS_DIR)/obj
-TESTS_BIN_DIR = $(TESTS_DIR)/bin
+TESTS_DIR := tests
+TESTS_OBJ_DIR := $(TESTS_DIR)/obj
+TESTS_BIN_DIR := $(TESTS_DIR)/bin
 
-TESTS_MAIN = $(TESTS_DIR)/main.cc
-TESTS = $(wildcard $(TESTS_DIR)/*.cc)
+TESTS_MAIN := $(TESTS_DIR)/main.cc
+TESTS := $(wildcard $(TESTS_DIR)/*.cc)
 TESTS := $(filter-out $(TESTS_MAIN), $(TESTS))
-TESTS_OBJ = $(patsubst $(TESTS_DIR)/%.cc, $(TESTS_OBJ_DIR)/%.o, $(TESTS))
-TESTS_BIN = $(TESTS_BIN_DIR)/main
+TESTS_OBJ := $(patsubst $(TESTS_DIR)/%.cc, $(TESTS_OBJ_DIR)/%.o, $(TESTS))
+TESTS_BIN := $(TESTS_BIN_DIR)/main
 
 # general targets
 .PHONY: all
@@ -110,4 +110,4 @@ $(TESTS_BIN): $(TESTS_MAIN) $(TESTS_OBJ)
 	$(CXX) $^ $(OBJ_RL) $(LIBS) $(CXXFLAGS) -o $@
 
 $(TESTS_OBJ_DIR)/%.o: $(TESTS_DIR)/%.cc
-	$(CXX) -c $< -I $(SRC_DIR) $(CXXFLAGS) -o $@
+	$(CXX) -c $< $(CXXFLAGS) -o $@
