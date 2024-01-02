@@ -40,7 +40,7 @@ static int32_t cmd_add_arg(Command *cmd, char *arg) {
     return 0;
 }
 
-int32_t get_cmd(char buf[], Command *cmd) {
+int32_t parse_cmd(char buf[], Command *cmd) {
     init_cmd(cmd);
 
     const char *delimiter = " \n";

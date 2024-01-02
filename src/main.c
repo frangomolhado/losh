@@ -23,17 +23,17 @@ int main(void) {
         printf("losh$ "); // temporary while a proper prompt doesn't exist
         fflush(stdout);
 
-        char *get_result = fgets(input, INPUT_SIZE, stdin);
-        if (get_result == NULL) {
+        char *fgets_result = fgets(input, INPUT_SIZE, stdin);
+        if (fgets_result == NULL) {
             const char *errmsg = strerror(errno);
             perror(errmsg);
             clearerr(stdin);
             continue;
-        } else if (get_result[0] == '\n') {
+        } else if (fgets_result[0] == '\n') {
             continue;
         }
 
-        if (get_cmd(input, &cmd) != 0) continue;
+        if (parse_cmd(input, &cmd) != 0) continue;
 
         exec_cmd(&cmd);
     }

@@ -11,4 +11,4 @@ typedef struct {
 } Command;
 
 void init_cmd(Command *cmd);
-int32_t get_cmd(char buf[], Command *cmd);
+int32_t parse_cmd(char buf[], Command *cmd);
