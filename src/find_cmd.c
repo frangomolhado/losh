@@ -10,8 +10,8 @@
 #include <sys/stat.h>
 
 char *join_paths(const char *root, const char *relative) {
-    size_t size = strlen(root) + 1 + strlen(relative) + 1;
-    char *result = calloc(size, 0);
+    size_t length = strlen(root) + 1 + strlen(relative) + 1;
+    char *result = calloc(length, sizeof(char));
     if (result == NULL) {
         return NULL;
     }
