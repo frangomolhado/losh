@@ -3,8 +3,6 @@
 
 #include "cmd_parser.h"
 
-#include "input.h"
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -70,16 +68,12 @@ static void cmdlist_push(CommandList *cmdlist, Command *cmd) {
 }
 
 // TODO: handle memory allocation fails
-CommandList *get_cmds(char input[INPUT_BUFFER_SIZE]) {
-    if (input[0] == '\0') {
-        return NULL;
-    }
-
+CommandList *get_cmds(char buf[]) {
     CommandList *cmdlist = alloc_cmdlist();
     Command *cmd = alloc_cmd();
 
     const char *delimiter = " \n";
-    char *tk = strtok(input, delimiter);
+    char *tk = strtok(buf, delimiter);
     while (tk) {
         if (strcmp(tk, TK_INPUT_REDIRECT) == 0) {
             tk = strtok(NULL, delimiter);

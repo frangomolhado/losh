@@ -1,7 +1,5 @@
 #pragma once
 
-#include "input.h"
-
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -22,4 +20,4 @@ typedef struct {
 
 void free_cmds(CommandList *cmdlist);
 
-CommandList *get_cmds(char input[INPUT_BUFFER_SIZE]);
+CommandList *get_cmds(char buf[]);
