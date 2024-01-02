@@ -9,10 +9,10 @@ executable, and executing it with the appropriate arguments.
 - [x] **Built-in Commands**: Add support for built-in commands such as `cd`,
 `pwd`, `echo`, or `exit`. These commands should be executed within the shell
 process itself, without spawning a new process.
-- [x] **Input/Output Redirection**: Extend your shell to handle input and output
+- [ ] **Input/Output Redirection**: Extend your shell to handle input and output
 redirection using the `<` and `>` symbols. Allow users to redirect input from a
 file and redirect output to a file.
-- [x] **Background Process Execution**: Enable the execution of commands in the
+- [ ] **Background Process Execution**: Enable the execution of commands in the
 background by appending an `&` at the end of the command. Implement the ability
 to run a command in the background while still allowing the user to enter new
 commands.
