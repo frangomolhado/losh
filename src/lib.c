@@ -51,7 +51,7 @@ char *concatenate_strs(StrVector *sv, char c) {
         size += strlen(sv->strs[i]);
     }
 
-    char *result = malloc(size + 1);
+    char *result = malloc(size + sizeof(char));
     if (result == NULL) {
         return NULL;
     }
