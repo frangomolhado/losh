@@ -16,6 +16,8 @@ int main(void) {
     init_builtins();
 
     char input[INPUT_SIZE];
+    Command cmd;
+    init_cmd(&cmd);
     bool run = true;
     while (run) {
         printf("losh$ "); // temporary while a proper prompt doesn't exist
@@ -27,11 +29,13 @@ int main(void) {
             perror(errmsg);
             clearerr(stdin);
             continue;
+        } else if (get_result[0] == '\n') {
+            continue;
         }
 
-        CommandList *cmdlist = get_cmds(input);
-        exec_cmd(cmdlist);
-        free_cmds(cmdlist);
+        if (get_cmd(input, &cmd) != 0) continue;
+
+        exec_cmd(&cmd);
     }
 
     return EXIT_SUCCESS;

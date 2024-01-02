@@ -1,100 +1,60 @@
-// needed to use `strdup` function
-#define _POSIX_C_SOURCE 200809L
-
 #include "cmd_parser.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TK_OUTPUT_REDIRECT ">"
-#define TK_INPUT_REDIRECT "<"
-#define TK_BACKGROUND_PROCESS "&"
+#define COMMANDS_ARGS_ALLOCATION_FAILED 1
+#define COMMANDS_ARGS_REALLOCATION_FAILED 2
 
-static Command *alloc_cmd(void) {
-    Command *c = malloc(sizeof(Command));
-    c->args = NULL;
-    c->args_size = 0;
-    c->args_capacity = 4;
-
-    return c;
+void init_cmd(Command *cmd) {
+    cmd->size = 0;
+    cmd->capacity = 8;
+    cmd->args = NULL;
 }
 
-static void cmd_add_arg(Command *cmd, char *arg) {
+static int32_t cmd_add_arg(Command *cmd, char *arg) {
     if (cmd->args == NULL) {
-        cmd->args = malloc(sizeof(char *) * cmd->args_capacity);
-    } else if (cmd->args_size == cmd->args_capacity) {
-        // FIXME: the bad use of realloc here can cause a dangling pointer in
-        // case of lack of memory
-        cmd->args_capacity *= 2;
-        cmd->args = realloc(cmd->args, sizeof(char *) * cmd->args_capacity);
-    }
-    cmd->args[cmd->args_size++] = arg;
-}
+        // not freeing this memory because the OS will free it anyway when
+        // the program stops
+        cmd->args = malloc(sizeof(char *) * cmd->capacity);
+        if (cmd->args == NULL) {
+            fprintf(stderr, "\nERROR: memory allocation failed while allocating command's args\n");
+            return COMMANDS_ARGS_ALLOCATION_FAILED;
+        }
+    } else if (cmd->size == cmd->capacity) {
+        cmd->capacity *= 2;
+        char **tmp = realloc(cmd->args, sizeof(char *) * cmd->capacity);
+        if (tmp == NULL) {
+            cmd->capacity /= 2;
+            fprintf(stderr,
+                    "\nERROR: memory reallocation failed while reallocating command's args\n");
+            return COMMANDS_ARGS_REALLOCATION_FAILED;
+        }
 
-static CommandList *alloc_cmdlist(void) {
-    CommandList *l = malloc(sizeof(CommandList));
-    l->cmds = NULL;
-    l->size = 0;
-    l->capacity = 4;
-    l->input = NULL;
-    l->output = NULL;
-    l->background_process = false;
-
-    return l;
-}
-
-void free_cmds(CommandList *cmdlist) {
-    if (cmdlist != NULL) {
-        free(cmdlist->cmds);
-        free(cmdlist->input);
-        free(cmdlist->output);
-        free(cmdlist);
-    }
-}
-
-static void cmdlist_push(CommandList *cmdlist, Command *cmd) {
-    if (cmdlist->cmds == NULL) {
-        cmdlist->cmds = malloc(sizeof(Command) * cmdlist->capacity);
-    } else if (cmdlist->size >= cmdlist->capacity) {
-        // FIXME: the bad use of realloc here can cause a dangling pointer in
-        // case of lack of memory
-        cmdlist->capacity *= 2;
-        cmdlist->cmds = realloc(cmdlist->cmds, sizeof(Command) * cmdlist->capacity);
-        cmdlist->cmds[cmdlist->size++] = *cmd;
+        cmd->args = tmp;
     }
 
-    cmd_add_arg(cmd, NULL);
-    cmdlist->cmds[cmdlist->size++] = *cmd;
+    cmd->args[cmd->size++] = arg;
+
+    return 0;
 }
 
-// TODO: handle memory allocation fails
-CommandList *get_cmds(char buf[]) {
-    CommandList *cmdlist = alloc_cmdlist();
-    Command *cmd = alloc_cmd();
+int32_t get_cmd(char buf[], Command *cmd) {
+    init_cmd(cmd);
 
     const char *delimiter = " \n";
     char *tk = strtok(buf, delimiter);
     while (tk) {
-        if (strcmp(tk, TK_INPUT_REDIRECT) == 0) {
-            tk = strtok(NULL, delimiter);
-            if (cmdlist->input == NULL) {
-                cmdlist->input = strdup(tk);
-            }
-        } else if (strcmp(tk, TK_OUTPUT_REDIRECT) == 0) {
-            tk = strtok(NULL, delimiter);
-            if (cmdlist->output == NULL) {
-                cmdlist->output = strdup(tk);
-            }
-        } else if (strcmp(tk, TK_BACKGROUND_PROCESS) == 0) {
-            cmdlist->background_process = true;
-        } else {
-            cmd_add_arg(cmd, tk);
+        int32_t status = cmd_add_arg(cmd, tk);
+        if (status != 0) {
+            return status;
         }
 
         tk = strtok(NULL, delimiter);
     }
 
-    cmdlist_push(cmdlist, cmd);
+    cmd_add_arg(cmd, NULL);
 
-    return cmdlist;
+    return 0;
 }

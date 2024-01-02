@@ -2,22 +2,13 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 typedef struct {
     char **args;
-    size_t args_size;
-    size_t args_capacity;
-} Command;
-
-typedef struct {
-    Command *cmds;
     size_t size;
     size_t capacity;
-    char *input;
-    char *output;
-    bool background_process;
-} CommandList;
+} Command;
 
-void free_cmds(CommandList *cmdlist);
-
-CommandList *get_cmds(char buf[]);
+void init_cmd(Command *cmd);
+int32_t get_cmd(char buf[], Command *cmd);
