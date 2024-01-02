@@ -88,11 +88,12 @@ Since the GoogleTest framework is written in C++, the test files also happen
 to be C++ files, but of course calling the source code in C ([FFI](
 https://en.wikipedia.org/wiki/Foreign_function_interface)).
 
-To run the tests, you can use the command below:
+To run the tests, use the command below. Make sure to use the `RELEASE=1` flag,
+otherwise it will NOT compile.
 
 ```bash
-make test            # or
-make test RELEASE=1  # following the same logic as before
+RELEASE=1 make test  # or
+make test RELEASE=1
 ```
 
 ## What have I learned with this?
