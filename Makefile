@@ -28,12 +28,13 @@ BIN := losh
 
 # tests variables
 CXX := clang++
-CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -fsanitize=undefined,address -O2
+CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -D_FORTIFY_SOURCE=2 -O2
 CXXLDFLAGS := -lgtest
 
 TESTS_DIR := tests
 TESTS_OBJ_DIR := $(TESTS_DIR)/obj
 TESTS_BIN_DIR := $(TESTS_DIR)/bin
+TESTS_INCLUDE := $(SRC_DIR)
 
 TESTS_MAIN := $(TESTS_DIR)/main.cc
 TESTS := $(wildcard $(TESTS_DIR)/*.cc)
@@ -49,17 +50,11 @@ all: debug
 
 run: debug
 	@./$(BIN_DIR)/debug/$(BIN)
-
-test: debug make_tests_dirs $(TESTS_BIN)
-	@./$(TESTS_BIN)
 else
 all: release
 
 run: release
 	@./$(BIN_DIR)/release/$(BIN)
-
-test: release make_tests_dirs $(TESTS_BIN)
-	@./$(TESTS_BIN)
 endif
 
 clean:
@@ -107,6 +102,11 @@ $(OBJ_DIR)/release/%.o: $(SRC_DIR)/%.c
 	$(CC) -c $< $(CFLAGS) -o $@
 
 # tests compilation
+ifeq ($(RELEASE), 1)
+test: release make_tests_dirs $(TESTS_BIN)
+	@./$(TESTS_BIN)
+endif
+
 .PHONY: make_tests_dirs
 make_tests_dirs: $(TESTS_OBJ_DIR) $(TESTS_BIN_DIR)
 
@@ -120,4 +120,4 @@ $(TESTS_BIN): $(TESTS_MAIN) $(TESTS_OBJ)
 	$(CXX) $^ $(OBJ) $(CXXLDFLAGS) $(CXXFLAGS) -o $@
 
 $(TESTS_OBJ_DIR)/%.o: $(TESTS_DIR)/%.cc
-	$(CXX) -c $< $(CXXFLAGS) -o $@
+	$(CXX) -c $< -I $(TESTS_INCLUDE) $(CXXFLAGS) -o $@
