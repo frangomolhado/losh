@@ -41,8 +41,6 @@ static int32_t cmd_add_arg(Command *cmd, char *arg) {
 }
 
 int32_t parse_cmd(char buf[], Command *cmd) {
-    init_cmd(cmd);
-
     const char *delimiter = " \n";
     char *tk = strtok(buf, delimiter);
     while (tk) {
