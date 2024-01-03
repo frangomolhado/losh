@@ -38,18 +38,6 @@ make run RELEASE=1
 
 ### File Structure
 
-```bash
-.
-├── src/
-├── tests/
-├── .clang-format
-├── .gitignore
-├── LICENSE
-├── Makefile
-├── README.md
-└── TODO.md
-```
-
 Within the `src` directory is where the source code is located. When you
 compile the code, two more directories will be created on the root directory:
 `bin` and `obj`, both having the binaries executables and the object files,
@@ -59,6 +47,11 @@ In the `tests` directory are located the tests from the project. Similarly as
 the proccess described before, when the tests are compiled, two other directories
 will be created, them been `tests/bin` and `tests/obj` and, respectively, storing
 the binary executable to run the tests and the object files of them.
+
+Lastly, the `compile_flags.txt` file is destinated to put the include paths of
+the project, been only a simple mechanism, in this project, to make the LSP
+recognize those paths, and a simpler version of `compile_commands.json` and
+`.clangd` [config file](https://clangd.llvm.org/config.html).
 
 ### Usefull Commands
 
